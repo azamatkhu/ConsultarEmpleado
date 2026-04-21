@@ -1,15 +1,35 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import java.sql.*;
+import java.util.Scanner;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+public class MainConsultarEmpleado {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        try {
+            Connection connection = DriverManager.getConnection(
+                    "jdbc:oracle:thin:@localhost:1521:xe",
+                    "RIBERA",
+                    "ribera"
+            );
+
+            System.out.println("Conectado!");
+
+            System.out.println("Introduce el id de departamento: ");
+            int id = sc.nextInt();
+
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT NOMBRE AS nombre, SALARIO AS salario FROM EMPLEADO WHERE DEPARTAMENTO_ID = ?");
+            preparedStatement.setInt(1, id);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                String empleadoNombre =  resultSet.getString("nombre");
+                double salario = resultSet.getDouble("salario");
+                System.out.println(empleadoNombre + " " + salario);
+            }
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
